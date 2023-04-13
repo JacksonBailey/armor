@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<head>
+  <style>
+    td {
+      text-align: right;
+    }
+  </style>
+  <script>
+    "use strict";
+    function init() {
+      // Populate the armor table
+      let tableBody = document.getElementById("armors");
+
+      Object.entries(armorData).forEach(([armorPiece, levels]) => {
+        let newRow = tableBody.insertRow();
+        let firstCell = newRow.insertCell();
+        firstCell.innerHTML = armorPiece;
+        for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+          let cell = newRow.insertCell();
+          cell.innerHTML = makeCheck(armorPiece, levelIndex);
+        }
+      })
+      update();
+    }
+    function update() {
+      // Populate the materials table
+      let tableBody = document.getElementById("totals");
+
+      // First, clear old data
+      while (tableBody.rows.length > 0) {
+        tableBody.deleteRow(0);
+      }
+
+      let matsNeeded = new Map();
+
+      // Find which are needed
+      Object.entries(armorData).forEach(([armorPiece, levels]) => {
+        for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+          if (!isChecked(armorPiece, levelIndex)) {
+            let level = levels[levelIndex];
+            Object.entries(level).forEach(([material, quantity]) => {
+              if (matsNeeded.has(material)) {
+                let currentNeededQuantity = matsNeeded.get(material);
+                matsNeeded.set(material, currentNeededQuantity + quantity);
+              } else {
+                matsNeeded.set(material, quantity);
+              }
+            })
+          }
+        }
+      })
+
+      // Sort by material
+      matsNeeded = new Map([...matsNeeded].sort((a, b) => String(a[0]).localeCompare(b[0])))
+
+      // Put them in the table
+      matsNeeded.forEach((quantity, material) => {
+        let newRow = tableBody.insertRow();
+        newRow.insertCell().innerHTML = material;
+        newRow.insertCell().innerHTML = quantity;
+      })
+    }
+    function makeCheck(name, level) {
+      // <input type="checkbox" id="Armor NameX" onchange="update()">
+      return "<input type=\"checkbox\" id=\"" + name + level + "\" onchange=\"update()\">";
+    }
+    function isChecked(name, level) {
+      return document.getElementById(name + level).checked
+    }
+    const armorData = {
+      "Hylian Helmet": [
+        {
+          "Bokoblin Horn": 5,
+        },
+        {
+          "Bokoblin Horn": 8,
+          "Bokoblin Fang": 5,
+        },
+        {
+          "Bokoblin Fang": 10,
+          "Bokoblin Guts": 5,
+        },
+        {
+          "Bokoblin Guts": 15,
+          "Amber": 15,
+        },
+      ],
+      "Hylian Chest": [
+        {
+          "Bokoblin Horn": 5,
+        },
+        {
+          "Bokoblin Horn": 8,
+          "Bokoblin Fang": 5,
+        },
+        {
+          "Bokoblin Fang": 10,
+          "Bokoblin Guts": 5,
+        },
+        {
+          "Bokoblin Guts": 15,
+          "Amber": 15,
+        },
+      ],
+      "Hylian Boots": [
+        {
+          "Bokoblin Horn": 5,
+        },
+        {
+          "Bokoblin Horn": 8,
+          "Bokoblin Fang": 5,
+        },
+        {
+          "Bokoblin Fang": 10,
+          "Bokoblin Guts": 5,
+        },
+        {
+          "Bokoblin Guts": 15,
+          "Amber": 15,
+        },
+      ],
+    }
+  </script>
+</head>
+
+<body onload="init()">
+  <h1>Armor upgrade materials tracker</h1>
+  <p>
+    Each checkbox of the first table represents each upgrade (represented in
+    game by stars). The base version of the armor is not represented because
+    this tool is only for tracking upgrade materials needed. When you have a
+    specific upgrade completed <i>or you do not care about it</i> then check the
+    box. As an example, if you do not want the final upgrades of any armors then
+    check off the entire final column. If you do not want an armor at all then
+    check off the entire row.
+  </p>
+  <h2>Armors</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>1★</th>
+        <th>2★</th>
+        <th>3★</th>
+        <th>4★</th>
+      </tr>
+    </thead>
+    <tbody id="armors"></tbody>
+  </table>
+  <h2>Materials needed</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Amount</th>
+      </tr>
+    <tbody id="totals"></tbody>
+    </thead>
+  </table>
+</body>
