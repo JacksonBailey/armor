@@ -14,8 +14,10 @@
 
       Object.entries(armorData).forEach(([armorPiece, levels]) => {
         let newRow = tableBody.insertRow();
-        let firstCell = newRow.insertCell();
-        firstCell.innerHTML = armorPiece;
+        let allCell = newRow.insertCell();
+        allCell.innerHTML = makeCheckAll(armorPiece);
+        let nameCell = newRow.insertCell();
+        nameCell.innerHTML = armorPiece;
         for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
           let cell = newRow.insertCell();
           cell.innerHTML = makeCheck(armorPiece, levelIndex);
@@ -35,9 +37,11 @@
       let matsNeeded = new Map();
 
       // Find which are needed
+      let wholeTableChecked = true;
       Object.entries(armorData).forEach(([armorPiece, levels]) => {
+        let wholeRowChecked = true;
         for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
-          if (!isChecked(armorPiece, levelIndex)) {
+          if (isChecked(armorPiece, levelIndex)) {
             let level = levels[levelIndex];
             Object.entries(level).forEach(([material, quantity]) => {
               if (matsNeeded.has(material)) {
@@ -47,9 +51,14 @@
                 matsNeeded.set(material, quantity);
               }
             })
+          } else {
+            wholeRowChecked = false;
+            wholeTableChecked = false;
           }
         }
+        setChecked(armorPiece, "", wholeRowChecked); // TODO
       })
+      setChecked("all", "", wholeTableChecked); // TODO
 
       // Sort by material
       matsNeeded = new Map([...matsNeeded].sort((a, b) => String(a[0]).localeCompare(b[0])))
@@ -61,13 +70,45 @@
         newRow.insertCell().innerHTML = quantity;
       })
     }
+
+    function updateWholeRow(id) {
+      Object.entries(armorData).forEach(([armorPiece, levels]) => {
+        if (armorPiece === id) {
+          for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+            setChecked(armorPiece, levelIndex, isChecked(armorPiece, "")) // TODO
+          }
+        }
+      })
+      update();
+    }
+
+    function updateWholeTable() {
+      Object.entries(armorData).forEach(([armorPiece, levels]) => {
+        for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+          setChecked(armorPiece, levelIndex, isChecked("all", "")) // TODO
+        }
+      })
+      update();
+    }
+
     function makeCheck(name, level) {
       // <input type="checkbox" id="Armor NameX" onchange="update()">
       return "<input type=\"checkbox\" id=\"" + name + level + "\" onchange=\"update()\">";
     }
-    function isChecked(name, level) {
-      return document.getElementById(name + level).checked
+
+    function makeCheckAll(name) {
+      // <input type="checkbox" id="Armor NameX" onchange="update()">
+      return "<input type=\"checkbox\" id=\"" + name + "\" onchange=\"updateWholeRow(this.id)\">";
     }
+
+    function isChecked(name, level) {
+      return document.getElementById(name + level).checked;
+    }
+
+    function setChecked(name, level, state) {
+      document.getElementById(name + level).checked = state;
+    }
+
     const armorData = {
       "Hylian Helmet": [
         {
@@ -120,6 +161,272 @@
           "Amber": 15,
         },
       ],
+      "Champion's Tunic": [
+        {
+          "Silent Princess": 3,
+        },
+        {
+          "Silent Princess": 3,
+          "Shard of Farosh's Horn": 2,
+        },
+        {
+          "Silent Princess": 3,
+          "Shard of Naydra's Horn": 2,
+        },
+        {
+          "Silent Princess": 10,
+          "Shard of Dinraal's Horn": 2,
+        },
+      ],
+      "Sand Boots": [
+        {
+          "Molduga Fin": 5,
+          "Hightail Lizard": 10,
+        },
+        {
+          "Molduga Fin": 10,
+          "Swift Carrot": 10,
+        },
+        {
+          "Molduga Guts": 2,
+          "Rushroom": 15,
+        },
+        {
+          "Molduga Guts": 4,
+          "Swift Violet": 15,
+        },
+      ],
+      "Snow Boots": [
+        {
+          "Octorok Tentacle": 5,
+          "Hightail Lizard": 10,
+        },
+        {
+          "Octo Balloon": 5,
+          "Swift Carrot": 10,
+        },
+        {
+          "Octorok Eyeball": 5,
+          "Rushroom": 15,
+        },
+        {
+          "Naydra's Scale": 2,
+          "Swift Violet": 15,
+        },
+      ],
+      "Amber Earrings": [
+        {
+          "Amber": 5,
+          "Flint": 3,
+        },
+        {
+          "Amber": 10,
+          "Flint": 3,
+        },
+        {
+          "Amber": 20,
+          "Flint": 3,
+        },
+        {
+          "Amber": 30,
+          "Flint": 3,
+        },
+      ],
+      "Diamond Circlet": [
+        {
+          "Diamond": 2,
+          "Flint": 3,
+        },
+        {
+          "Diamond": 4,
+          "Flint": 3,
+        },
+        {
+          "Diamond": 6,
+          "Star Fragment": 1,
+        },
+        {
+          "Diamond": 10,
+          "Star Fragment": 1,
+        },
+      ],
+      "Opal Earrings": [
+        {
+          "Opal": 5,
+          "Flint": 3,
+        },
+        {
+          "Opal": 8,
+          "Flint": 3,
+        },
+        {
+          "Opal": 16,
+          "Flint": 3,
+        },
+        {
+          "Opal": 20,
+          "Flint": 3,
+        },
+      ],
+      "Ruby Circlet": [
+        {
+          "Ruby": 2,
+          "Flint": 3,
+        },
+        {
+          "Ruby": 4,
+          "Flint": 3,
+        },
+        {
+          "Ruby": 6,
+          "Star Fragment": 1,
+        },
+        {
+          "Ruby": 10,
+          "Star Fragment": 1,
+        },
+      ],
+      "Sapphire Circlet": [
+        {
+          "Sapphire": 2,
+          "Flint": 3,
+        },
+        {
+          "Sapphire": 4,
+          "Flint": 3,
+        },
+        {
+          "Sapphire": 6,
+          "Star Fragment": 1,
+        },
+        {
+          "Sapphire": 10,
+          "Star Fragment": 1,
+        },
+      ],
+      "Topaz Circlet": [
+        {
+          "Topaz": 2,
+          "Flint": 3,
+        },
+        {
+          "Topaz": 4,
+          "Flint": 3,
+        },
+        {
+          "Topaz": 6,
+          "Star Fragment": 1,
+        },
+        {
+          "Topaz": 10,
+          "Star Fragment": 1,
+        },
+      ],
+      "Ancient Helm": [
+        {
+          "Ancient Screw": 5,
+          "Ancient Spring": 5,
+        },
+        {
+          "Ancient Spring": 15,
+          "Ancient Gear": 10,
+        },
+        {
+          "Ancient Shaft": 15,
+          "Ancient Core": 5,
+        },
+        {
+          "Star Fragment": 1,
+          "Giant Ancient Core": 2,
+        },
+      ],
+      "Ancient Cuirass": [
+        {
+          "Ancient Screw": 5,
+          "Ancient Spring": 5,
+        },
+        {
+          "Ancient Spring": 15,
+          "Ancient Gear": 10,
+        },
+        {
+          "Ancient Shaft": 15,
+          "Ancient Core": 5,
+        },
+        {
+          "Star Fragment": 1,
+          "Giant Ancient Core": 2,
+        },
+      ],
+      "Ancient Greaves": [
+        {
+          "Ancient Screw": 5,
+          "Ancient Spring": 5,
+        },
+        {
+          "Ancient Spring": 15,
+          "Ancient Gear": 10,
+        },
+        {
+          "Ancient Shaft": 15,
+          "Ancient Core": 5,
+        },
+        {
+          "Star Fragment": 1,
+          "Giant Ancient Core": 2,
+        },
+      ],
+      "Barbarian Helm": [
+        {
+          "Lynel Horn": 1,
+        },
+        {
+          "Lynel Horn": 3,
+          "Lynel Hoof": 2,
+        },
+        {
+          "Lynel Hoof": 4,
+          "Lynel Guts": 1,
+        },
+        {
+          "Lynel Guts": 2,
+          "Shard of Dinraal's Horn": 1,
+        },
+      ],
+      "Barbarian Armor": [
+        {
+          "Lynel Horn": 1,
+        },
+        {
+          "Lynel Horn": 3,
+          "Lynel Hoof": 2,
+        },
+        {
+          "Lynel Hoof": 4,
+          "Lynel Guts": 1,
+        },
+        {
+          "Lynel Guts": 2,
+          "Shard of Dinraal's Horn": 1,
+        },
+      ],
+      "Barbarian Leg Wraps": [
+        {
+          "Lynel Horn": 1,
+        },
+        {
+          "Lynel Horn": 3,
+          "Lynel Hoof": 2,
+        },
+        {
+          "Lynel Hoof": 4,
+          "Lynel Guts": 1,
+        },
+        {
+          "Lynel Guts": 2,
+          "Shard of Dinraal's Horn": 1,
+        },
+      ],
     }
   </script>
 </head>
@@ -129,16 +436,19 @@
   <p>
     Each checkbox of the first table represents each upgrade (represented in
     game by stars). The base version of the armor is not represented because
-    this tool is only for tracking upgrade materials needed. When you have a
-    specific upgrade completed <i>or you do not care about it</i> then check the
-    box. As an example, if you do not want the final upgrades of any armors then
-    check off the entire final column. If you do not want an armor at all then
-    check off the entire row.
+    this tool is only for tracking upgrade materials needed. That means things
+    like the 5 Opals you need for the Opal Earrings are not tracked here.
   </p>
   <h2>Armors</h2>
+  <p>
+    Check the armors you <i>want</i> but do not <i>have</i>. If you already have
+    an upgrade or just do not care about tracking the materials for it right now
+    then <i>leave the box unchecked</i>.
+  </p>
   <table>
     <thead>
       <tr>
+        <th>All? <input type="checkbox" id="all" onchange="updateWholeTable()"></th>
         <th>Name</th>
         <th>1★</th>
         <th>2★</th>
@@ -149,6 +459,10 @@
     <tbody id="armors"></tbody>
   </table>
   <h2>Materials needed</h2>
+  <p>
+    These are the materials you need to get for the <i>checked</i> upgrades
+    above.
+  </p>
   <table>
     <thead>
       <tr>
