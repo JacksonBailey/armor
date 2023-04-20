@@ -5,6 +5,38 @@
     td {
       text-align: right;
     }
+
+    .flex-container {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+    }
+
+    .flex-item {
+      --margin: 5px;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: flex-start;
+      align-items: center;
+      flex-grow: 1;
+      max-width: calc(50% - 2 * var(--margin));
+      flex-basis: 50%;
+      margin: var(--margin);
+    }
+
+    .title {
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .flex-container {
+        flex-flow: column nowrap;
+      }
+
+      .flex-item {
+        max-width: 100%;
+      }
+    }
   </style>
   <script>
     "use strict";
@@ -974,50 +1006,56 @@
 </head>
 
 <body onload="init()">
-  <h1>Armor upgrade materials tracker</h1>
+  <h1 class="title">Armor upgrade materials tracker</h1>
   <p>
     Each checkbox of the first table represents each upgrade (represented in
     game by stars). The base version of the armor is not represented because
     this tool is only for tracking upgrade materials needed. That means things
     like the 5 Opals you need for the Opal Earrings are not tracked here.
   </p>
-  <h2>Armors</h2>
-  <p>
-    Check the armors you <i>want</i> but do not <i>have</i>. If you already have
-    an upgrade or just do not care about tracking the materials for it right now
-    then <i>leave the box unchecked</i>.
-  </p>
-  <p>
-    Checkboxes on the "all" side will check/uncheck the entire row. The one on
-    the first row will do this for the entire table.
-  </p>
-  <table>
-    <thead>
-      <tr>
-        <th>All? <input type="checkbox" id="all" onchange="updateWholeTable()"></th>
-        <th>Name</th>
-        <th>1★</th>
-        <th>2★</th>
-        <th>3★</th>
-        <th>4★</th>
-      </tr>
-    </thead>
-    <tbody id="armors"></tbody>
-  </table>
-  <h2>Materials needed</h2>
-  <p>
-    These are the materials you need to get for the <i>checked</i> upgrades
-    above.
-  </p>
-  <table>
-    <thead>
-      <tr>
-        <th>Material</th>
-        <th>Amount</th>
-      </tr>
-    <tbody id="totals"></tbody>
-    </thead>
-  </table>
+  <div class="flex-container">
+    <div class="flex-item armor">
+      <h2>Armors</h2>
+      <p>
+        Check the armors you <i>want</i> but do not <i>have</i>. If you already
+        have an upgrade or just do not care about tracking the materials for it
+        right now then <i>leave the box unchecked</i>.
+      </p>
+      <p>
+        Checkboxes on the "all" side will check/uncheck the entire row. The one
+        on the first row will do this for the entire table.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>All? <input type="checkbox" id="all" onchange="updateWholeTable()"></th>
+            <th>Name</th>
+            <th>1★</th>
+            <th>2★</th>
+            <th>3★</th>
+            <th>4★</th>
+          </tr>
+        </thead>
+        <tbody id="armors"></tbody>
+      </table>
+    </div>
+    <div class="flex-item">
+      <h2>Materials needed</h2>
+      <p>
+        These are the materials you need to get for the <i>checked</i> upgrades
+        above.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="totals"></tbody>
+      </table>
+    </div>
+  </div>
 </body>
 <footer>
   <hr>
