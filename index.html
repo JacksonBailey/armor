@@ -70,6 +70,7 @@
 
       // Find which are needed
       let wholeTableChecked = true;
+      let wholeColumnChecked = [true, true, true, true];
       Object.entries(armorData).forEach(([armorPiece, levels]) => {
         let wholeRowChecked = true;
         for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
@@ -86,11 +87,15 @@
           } else {
             wholeRowChecked = false;
             wholeTableChecked = false;
+            wholeColumnChecked[levelIndex] = false;
           }
         }
         setChecked(armorPiece, "", wholeRowChecked); // TODO
       })
       setChecked("all", "", wholeTableChecked); // TODO
+      for (let columnIndex = 0; columnIndex < wholeColumnChecked.length; columnIndex++) {
+        setChecked("", columnIndex, wholeColumnChecked[columnIndex]); // TODO
+      }
 
       // Sort by material
       matsNeeded = new Map([...matsNeeded].sort((a, b) => String(a[0]).localeCompare(b[0])))
@@ -110,6 +115,13 @@
             setChecked(armorPiece, levelIndex, isChecked(armorPiece, "")) // TODO
           }
         }
+      })
+      update();
+    }
+
+    function updateWholeColumn(levelIndex) {
+      Object.entries(armorData).forEach(([armorPiece, levels]) => {
+        setChecked(armorPiece, levelIndex, isChecked("", levelIndex)) // TODO
       })
       update();
     }
@@ -1030,10 +1042,10 @@
           <tr>
             <th>All? <input type="checkbox" id="all" onchange="updateWholeTable()"></th>
             <th>Name</th>
-            <th>1★</th>
-            <th>2★</th>
-            <th>3★</th>
-            <th>4★</th>
+            <th>1★ <input type="checkbox" id="0" onchange="updateWholeColumn(this.id)"></th>
+            <th>2★ <input type="checkbox" id="1" onchange="updateWholeColumn(this.id)"></th>
+            <th>3★ <input type="checkbox" id="2" onchange="updateWholeColumn(this.id)"></th>
+            <th>4★ <input type="checkbox" id="3" onchange="updateWholeColumn(this.id)"></th>
           </tr>
         </thead>
         <tbody id="armors"></tbody>
